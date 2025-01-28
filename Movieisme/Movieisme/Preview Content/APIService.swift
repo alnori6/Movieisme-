@@ -44,7 +44,24 @@ class APIService {
          // Then call our generic fetch method with decodeType: `Movies`
          fetchData(from: url, decodeType: Movies.self, completion: completion)
      }
+    
+    
+    func fetchMovieDirectors(completion: @escaping (Result<MovieDirectors, Error>) -> Void) {
+        // Build the full URL: base + "/"
+        guard let url = URL(string: "\(baseURLString)/movie_directors") else {
+            completion(.failure(URLSessionError.invalidURL))
+            return
+        }
+        
+        // Then call our generic fetch method with decodeType: ``
+        fetchData(from: url, decodeType: MovieDirectors.self, completion: completion)
+    }
      
+    
+    
+    
+    
+    
      /// Fetch all actors
      func fetchActors(completion: @escaping (Result<Actors, Error>) -> Void) {
          guard let url = URL(string: "\(baseURLString)/actors") else {
@@ -54,6 +71,20 @@ class APIService {
          
          fetchData(from: url, decodeType: Actors.self, completion: completion)
      }
+    
+    /// Fetch all movie-actors relationships
+    func fetchMovieActors(completion: @escaping (Result<MovieActors, Error>) -> Void) {
+        guard let url = URL(string: "\(baseURLString)/movie_actors") else {
+            completion(.failure(URLSessionError.invalidURL))
+            return
+        }
+        
+        fetchData(from: url, decodeType: MovieActors.self, completion: completion)
+    }
+    
+    
+    
+    
      
      /// Fetch all reviews
      func fetchReviews(completion: @escaping (Result<Reviews, Error>) -> Void) {
@@ -176,16 +207,7 @@ class APIService {
          
          fetchData(from: url, decodeType: Direcrtors.self, completion: completion)
      }
-     
-     /// Fetch all movie_actors
-     func fetchMovieActors(completion: @escaping (Result<MovieActors, Error>) -> Void) {
-         guard let url = URL(string: "\(baseURLString)/movie_actors") else {
-             completion(.failure(URLSessionError.invalidURL))
-             return
-         }
-         
-         fetchData(from: url, decodeType: MovieActors.self, completion: completion)
-     }
+    
      
      // MARK: - 4) Generic Fetch Method
      

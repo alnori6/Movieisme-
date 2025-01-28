@@ -60,8 +60,11 @@ struct Home: View {
                     // MARK: - the tabview for the movies whole
                     TabView(selection: $selectedPage) {
                         ForEach(movieVM.heighRatedMovies.indices, id: \.self) { index in
-                            MovieCardView(movie: movieVM.heighRatedMovies[index])
-                                .tag(index)
+                            NavigationLink(destination: MovieInfo(movie: movieVM.heighRatedMovies[index])) {
+                                MovieCardView(movie: movieVM.heighRatedMovies[index])
+                                    .tag(index)
+                            }.buttonStyle(.plain)
+                            
 //                                .environmentObject(movieVM)// Use the MovieCard component here
                         }
                         
@@ -112,8 +115,10 @@ struct Home: View {
                     ScrollView(.horizontal, showsIndicators: false){
                         HStack(spacing: 16){
                             ForEach(movieVM.dramaMovies.indices, id: \.self) { index in
-                                MovieMiniCard(movie: movieVM.dramaMovies[index])
-                                    .tag(index)
+                                NavigationLink(destination: MovieInfo(movie: movieVM.dramaMovies[index])) {
+                                    MovieMiniCard(movie: movieVM.dramaMovies[index])
+                                        .tag(index)
+                                }.buttonStyle(PlainButtonStyle())
                             }
                         }
                         
@@ -144,8 +149,10 @@ struct Home: View {
                     ScrollView(.horizontal, showsIndicators: false){
                         HStack(spacing: 16){
                             ForEach(movieVM.comedyMovies.indices, id: \.self) { index in
-                                MovieMiniCard(movie: movieVM.comedyMovies[index])
-                                    .tag(index)
+                                NavigationLink(destination: MovieInfo(movie: movieVM.comedyMovies[index])) {
+                                    MovieMiniCard(movie: movieVM.comedyMovies[index])
+                                        .tag(index)
+                                }.buttonStyle(PlainButtonStyle())
                             }
                         }
                         

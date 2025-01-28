@@ -11,7 +11,7 @@ struct ProfileInfo: View {
     
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var movieVM : movieViewModel
-    @EnvironmentObject private var imageVM : imageSelectorVM
+    @StateObject private var imageVM = imageSelectorVM()
     
     @State private var firstName: String = ""
     @State private var lastName: String = ""
@@ -122,6 +122,7 @@ struct ProfileInfo: View {
                 
                 if !isEditing {
                    Button(action: {
+                       movieVM.logoutUser()
                        showAlertSignOut.toggle()
                    }) {
                        Text("Sign Out")
@@ -144,13 +145,27 @@ struct ProfileInfo: View {
                 // Edit button
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                       movieVM.loggedInUser?.fields.name = "\(firstName) \(lastName)"
-                       isEditing.toggle() // Exit edit mode
-                        movieVM.updateUserName(firstName: firstName, lastName: lastName){ success in
-                            if success {
-                                isEditing.toggle() // Exit edit mode
+                        
+                        if isEditing {
+                            // Save changes
+                            movieVM.updateUserName(firstName: firstName, lastName: lastName) { success in
+                                if success {
+                                    isEditing = false // Exit edit mode only after successful update
+                                } else {
+                                    showErrorAlert = true // Show error alert if update fails
+                                }
                             }
+                        } else {
+                            // Enter edit mode
+                            isEditing = true
                         }
+//                       movieVM.loggedInUser?.fields.name = "\(firstName) \(lastName)"
+//                       isEditing.toggle() // Exit edit mode
+//                        movieVM.updateUserName(firstName: firstName, lastName: lastName){ success in
+//                            if success {
+//                                isEditing.toggle() // Exit edit mode
+//                            }
+//                        }
                         
                     }) {
                         Text(isEditing ? "Save" : "Edit")

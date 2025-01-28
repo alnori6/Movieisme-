@@ -16,6 +16,9 @@
 //   let movieActors = try? JSONDecoder().decode(MovieActors.self, from: jsonData)
 //   let movies = try? JSONDecoder().decode(Movies.self, from: jsonData)
 
+//https://api.airtable.com/v0/appsfcB6YESLj4NCN/movie_directors?filterByFormula=movie_id="5c8b046a-3c22-46c7-8472-fcf8707c7af6"
+
+
 
 import Foundation
 
@@ -70,13 +73,33 @@ struct FluffyFields: Codable {
 }
 
 
-// MARK: - Actors
-struct Actors: Codable {
-    let records: [DirecrtorsRecord]?
-    let name: String?
-    let founded: Int?
-    let members: [String]?
+
+// MARK: - Movies Direcrtors
+struct MovieDirectors:Codable{
+    let records: [MovieDirectorsRecord]
 }
+
+// MARK: - MovieDirectorsRecord
+struct MovieDirectorsRecord:Codable, Identifiable{
+    let id, createdTime: String
+    let fields: MovieDirectorsFields
+}
+
+// MARK: - MovieDirectorsFields
+struct MovieDirectorsFields: Codable {
+    let directorID: String
+    let movieID: String
+    
+    enum CodingKeys: String, CodingKey {
+        case directorID = "director_id"
+        case movieID = "movie_id"
+    }
+}
+
+
+
+
+// MARK: - Actors
 
 // MARK: - MovieActors
 struct MovieActors: Codable {
@@ -86,13 +109,12 @@ struct MovieActors: Codable {
 // MARK: - MovieActorsRecord
 struct MovieActorsRecord: Codable, Identifiable {
     let id, createdTime: String
-    let fields: StickyFields
+    let fields: MovieActorsFields
 }
 
-// MARK: - StickyFields
-struct StickyFields: Codable {
+// MARK: - MovieActorsFields
+struct MovieActorsFields: Codable {
     let actorID: String
-//    let movieID: ID
     let movieID: String
 
     enum CodingKeys: String, CodingKey {
@@ -100,6 +122,54 @@ struct StickyFields: Codable {
         case movieID = "movie_id"
     }
 }
+
+// MARK: - Actors
+struct Actors: Codable {
+    let records: [ActorsRecord]
+}
+
+// MARK: - ActorsRecord
+struct ActorsRecord: Codable, Identifiable {
+    let id, createdTime: String
+    let fields: ActorFields
+}
+
+// MARK: - ActorFields
+struct ActorFields: Codable {
+    let name: String
+    let image: String
+}
+
+
+//struct Actors: Codable {
+//    let records: [DirecrtorsRecord]?
+//    let name: String?
+//    let founded: Int?
+//    let members: [String]?
+//}
+//
+//// MARK: - MovieActors
+//struct MovieActors: Codable {
+//    let records: [MovieActorsRecord]
+//}
+//
+//// MARK: - MovieActorsRecord
+//struct MovieActorsRecord: Codable, Identifiable {
+//    let id, createdTime: String
+//    let fields: StickyFields
+//}
+//
+//// MARK: - StickyFields
+//struct StickyFields: Codable {
+//    let actorID: String
+////    let movieID: ID
+//    let movieID: String
+//
+//    enum CodingKeys: String, CodingKey {
+//        case actorID = "actor_id"
+//        case movieID = "movie_id"
+//    }
+//}
 
 // MARK: - Movies
 struct Movies: Codable {

@@ -10,6 +10,7 @@ import SwiftUI
 struct SignUp: View {
     @State var email: String = ""
     @State var password: String = ""
+    
     @State var showSignIn: Bool = false
     @State var loginError: String? = nil // Error message for invalid login
     
@@ -143,9 +144,10 @@ struct SignUp: View {
                         
                         // Validate user login
                         if movieVM.validateUser(email: email, password: password) {
+                            movieVM.saveLoggedInUser() // Save the user session
                             showSignIn.toggle()
                         } else {
-                            loginError = "Invalid email or password."
+                            loginError = "Invalid password."
                         }
                     }
                     .disabled(false)
@@ -167,6 +169,10 @@ struct SignUp: View {
         }
         .onAppear {
             movieVM.loadUsers() // Ensure users are loaded
+            movieVM.loadLoggedInUser() // Check for a saved session
+            if movieVM.loggedInUser != nil {
+                showSignIn.toggle() // Automatically navigate to Home
+            }
         }
         
         
