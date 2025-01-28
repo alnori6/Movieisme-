@@ -17,7 +17,7 @@ struct yellowButton: ButtonStyle {
                 .font(.system(size: 20, weight: .semibold, design: .default))
                 .foregroundColor(Color("Dark1"))
         }
-        .frame(height: 52)
+        .frame(height: 44)
         .cornerRadius(8)
         .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
         .shadow(radius: 7, x: 0, y: 5)
@@ -36,7 +36,7 @@ struct grayButton: ButtonStyle {
                 .font(.system(size: 20, weight: .semibold, design: .default))
                 .foregroundColor(Color("Dark3"))
         }
-        .frame(height: 52)
+        .frame(height: 44)
         .cornerRadius(8)
         .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
         .shadow(radius: 7, x: 0, y: 5)
@@ -54,13 +54,31 @@ struct cancleYellow: ButtonStyle {
                 .font(.system(size: 20, weight: .semibold, design: .default))
                 .foregroundColor(Color.accent)
         }
-        .frame(height: 52)
+        .frame(height: 44)
         
         .background(
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Color.accent, lineWidth: 2) // Added border with the same color as text
                 .shadow(radius: 7, x: 0, y: 5)
         )
+        .cornerRadius(8)
+        .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+        .opacity(configuration.isPressed ? 0.8 : 1.0)
+        .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
+    }
+}
+
+struct signoutButton: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        ZStack {
+            Color("grayish")
+            configuration.label
+                .font(.system(size: 20, weight: .semibold, design: .default))
+                .foregroundColor(Color("errorColor"))
+              
+        }
+        .frame(height: 44)
+        
         .cornerRadius(8)
         .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
         .opacity(configuration.isPressed ? 0.8 : 1.0)
@@ -86,7 +104,9 @@ struct UIEffect: View {
             
         }.buttonStyle(cancleYellow()).padding()
         
-       
+        Button("Sign Out") {
+            
+        }.buttonStyle(signoutButton()).padding()
         
     }
     

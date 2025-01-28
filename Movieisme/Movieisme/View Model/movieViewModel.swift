@@ -110,17 +110,132 @@ class movieViewModel: ObservableObject {
        }
     }
 
+    //MARK: - users
     func loadUsers() {
        service.fetchUsers { [weak self] result in
            switch result {
            case .success(let usersContainer):
                self?.users = usersContainer.records
+               print(self?.users ?? "")
            case .failure(let error):
                self?.errorMessage = "Failed to load users: \(error.localizedDescription)"
            }
        }
     }
+    
+    //MARK: - login
+    
+    @Published var loggedInUser: UsersRecord? // To store the logged-in user
+    
+    func validateUser(email: String, password: String) -> Bool {
+//        // Ensure users array is loaded
+//        guard !users.isEmpty else {
+//            print("Users not loaded.")
+//            return false
+//        }
+//        
+//        // Match email and password with records
+//        return users.contains { $0.fields.email == email && $0.fields.password == password }
+        
+        // Ensure users array is loaded
+        guard !users.isEmpty else {
+           print("Users not loaded.")
+           return false
+        }
 
+        // Match email and password with records
+        if let user = users.first(where: { $0.fields.email.lowercased() == email.lowercased() && $0.fields.password == password }) {
+           loggedInUser = user // Store the logged-in user
+           return true
+        } else {
+           return false
+        }
+    }
+    
+    
+    
+    //MARK: - update the user name
+    
+
+    func updateUserName(firstName: String, lastName: String, completion: @escaping (Bool) -> Void) {
+        guard var loggedInUser = loggedInUser else {
+            completion(false)
+            return
+        }
+        
+        // Update the user's name
+        loggedInUser.fields.name = "\(firstName) \(lastName)"
+        
+        // Call the API to update the user
+        service.updateUser(user: loggedInUser) { [weak self] result in
+            switch result {
+            case .success(let updatedUser):
+                // Update the logged-in user in the ViewModel
+                self?.loggedInUser = updatedUser
+                // Update the user in the users array
+                if let index = self?.users.firstIndex(where: { $0.id == updatedUser.id }) {
+                    self?.users[index] = updatedUser
+                }
+                completion(true)
+            case .failure(let error):
+                print("Failed to update user: \(error.localizedDescription)")
+                completion(false)
+            }
+        }
+    }
+    
+    
+    // MARK: - saved movies for each user
+
+    // Add a movie to the saved list for the logged-in user
+    func saveMovie(movie: MoviesRecord) {
+        guard var loggedInUser = loggedInUser else { return }
+        
+        // Copy fields to modify
+        var fields = loggedInUser.fields
+        
+        if !fields.savedMovies.contains(where: { $0.id == movie.id }) {
+            fields.savedMovies.append(movie)
+            
+            // Update logged-in user's fields
+            loggedInUser.fields = fields
+            updateUser(loggedInUser)
+        }
+    }
+
+    // Remove a movie from the saved list
+    func removeSavedMovie(movie: MoviesRecord) {
+        guard var loggedInUser = loggedInUser else { return }
+        
+        // Copy fields to modify
+        var fields = loggedInUser.fields
+        
+        fields.savedMovies.removeAll(where: { $0.id == movie.id })
+        
+        // Update logged-in user's fields
+        loggedInUser.fields = fields
+        updateUser(loggedInUser)
+    }
+
+    // Fetch the saved movies for the logged-in user
+    func getSavedMovies() -> [MoviesRecord] {
+        loggedInUser?.fields.savedMovies ?? []
+    }
+
+    // Update the user in the users array
+    private func updateUser(_ user: UsersRecord) {
+        if let index = users.firstIndex(where: { $0.id == user.id }) {
+            users[index] = user
+            loggedInUser = user
+        }
+    }
+
+    
+    
+    
+    
+    
+    
     func loadDirectors() {
        service.fetchDirectors { [weak self] result in
            switch result {
@@ -154,7 +269,7 @@ class movieViewModel: ObservableObject {
             loadActors()
             loadUsers()
             loadDirectors()
-//            loadReviews()
+            loadReviews()
             loadMovieActors()
         }
     

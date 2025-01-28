@@ -11,8 +11,11 @@ struct SignUp: View {
     @State var email: String = ""
     @State var password: String = ""
     @State var showSignIn: Bool = false
+    @State var loginError: String? = nil // Error message for invalid login
     
     @FocusState private var focusedField: FocusField? // Track which field is focused
+    
+    @EnvironmentObject private var movieVM : movieViewModel
     
     enum FocusField {
         case email
@@ -97,7 +100,9 @@ struct SignUp: View {
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(focusedField == .password ? Color.accent : Color.clear, lineWidth: 2) // Yellow border when focused
+//                            .stroke(focusedField == .password ? Color.accent : Color.clear, lineWidth: 2) // Yellow border when focused
+                            // Change stroke color to red if loginError exists
+                            .stroke(loginError != nil ? Color("errorColor") : (focusedField == .password ? Color.accent : Color.clear), lineWidth: 2)
                     )
                     .focused($focusedField, equals: .password)
                     .placeholder(when: password.isEmpty, placeholder: {
@@ -110,13 +115,20 @@ struct SignUp: View {
                 
                     
                     
-
+                // MARK: - Error Message
+               if let loginError = loginError {
+                   Text(loginError)
+                       .foregroundColor(.red)
+                       .font(.system(size: 14, weight: .regular))
+                       .padding(.bottom, 8)
+               }
+                               
                     
                 
                 Spacer()
                     .frame(height: 41)
                 
-                // MARK: - button
+                // MARK: - button sign in
                     
                 if email.isEmpty || password.isEmpty {
                     Button("Sign in") {
@@ -127,12 +139,20 @@ struct SignUp: View {
                 } else {
                     Button("Sign in") {
                         focusedField = nil
-                        showSignIn.toggle()
+//                        showSignIn.toggle()
+                        
+                        // Validate user login
+                        if movieVM.validateUser(email: email, password: password) {
+                            showSignIn.toggle()
+                        } else {
+                            loginError = "Invalid email or password."
+                        }
                     }
                     .disabled(false)
                     .buttonStyle(yellowButton())
                     .fullScreenCover(isPresented: $showSignIn) {
                         Home()
+                            .environmentObject(movieVM)
                     }
                 }
                 
@@ -145,7 +165,9 @@ struct SignUp: View {
         .onTapGesture {
             focusedField = nil // Clear focus when tapping outside
         }
-        
+        .onAppear {
+            movieVM.loadUsers() // Ensure users are loaded
+        }
         
         
         
@@ -170,5 +192,5 @@ extension View {
 
 #Preview {
     SignUp()
-        
+        .environmentObject(movieViewModel())
 }

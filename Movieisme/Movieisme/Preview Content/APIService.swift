@@ -65,7 +65,7 @@ class APIService {
          fetchData(from: url, decodeType: Reviews.self, completion: completion)
      }
      
-     /// Fetch all users
+     //MARK: - Fetch all users
      func fetchUsers(completion: @escaping (Result<Users, Error>) -> Void) {
          guard let url = URL(string: "\(baseURLString)/users") else {
              completion(.failure(URLSessionError.invalidURL))
@@ -74,6 +74,98 @@ class APIService {
          
          fetchData(from: url, decodeType: Users.self, completion: completion)
      }
+    
+    // update the api users name after they save it 
+
+    func updateUser(user: UsersRecord, completion: @escaping (Result<UsersRecord, Error>) -> Void) {
+        guard let url = URL(string: "\(baseURLString)/users/\(user.id)") else {
+            completion(.failure(URLSessionError.invalidURL))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.addValue(apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let body: [String: Any] = [
+            "fields": [
+                "name": user.fields.name,
+                "email": user.fields.email,
+                "password": user.fields.password,
+                "profile_image": user.fields.profileImage
+            ]
+        ]
+        
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+        } catch {
+            completion(.failure(error))
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+                return
+            }
+            
+            if let httpResponse = response as? HTTPURLResponse,
+               !(200...299).contains(httpResponse.statusCode) {
+                let statusError = NSError(
+                    domain: "",
+                    code: httpResponse.statusCode,
+                    userInfo: [NSLocalizedDescriptionKey : "HTTP \(httpResponse.statusCode)"]
+                )
+                DispatchQueue.main.async {
+                    completion(.failure(statusError))
+                }
+                return
+            }
+            
+            guard let data = data else {
+                let noDataError = NSError(
+                    domain: "",
+                    code: 0,
+                    userInfo: [NSLocalizedDescriptionKey : "No data in response"]
+                )
+                DispatchQueue.main.async {
+                    completion(.failure(noDataError))
+                }
+                return
+            }
+            
+            do {
+                let decodedObject = try JSONDecoder().decode(UsersRecord.self, from: data)
+                DispatchQueue.main.async {
+                    completion(.success(decodedObject))
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }
+        
+        task.resume()
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
      
      /// Fetch all directors
      func fetchDirectors(completion: @escaping (Result<Direcrtors, Error>) -> Void) {

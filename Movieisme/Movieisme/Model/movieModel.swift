@@ -69,27 +69,6 @@ struct FluffyFields: Codable {
     let image: String
 }
 
-// MARK: - Users
-struct Users: Codable {
-    let records: [UsersRecord]
-}
-
-// MARK: - UsersRecord
-struct UsersRecord: Codable , Identifiable{
-    let id, createdTime: String
-    let fields: TentacledFields
-}
-
-// MARK: - TentacledFields
-struct TentacledFields: Codable {
-    let name, password, email: String
-    let profileImage: String
-
-    enum CodingKeys: String, CodingKey {
-        case name, password, email
-        case profileImage = "profile_image"
-    }
-}
 
 // MARK: - Actors
 struct Actors: Codable {
@@ -150,3 +129,29 @@ struct IndigoFields: Codable {
         case runtime, story
     }
 }
+
+
+// MARK: - Users
+struct Users: Codable {
+    let records: [UsersRecord]
+}
+
+// MARK: - UsersRecord
+struct UsersRecord: Codable , Identifiable{
+    let id, createdTime: String
+    var fields: TentacledFields
+}
+
+// MARK: - TentacledFields
+struct TentacledFields: Codable {
+    var name, password, email: String
+    let profileImage: String
+    var savedMovies: [MoviesRecord] = [] // to store saved movies for each user
+
+    enum CodingKeys: String, CodingKey {
+        case name, password, email
+        case profileImage = "profile_image"
+    }
+}
+
+
