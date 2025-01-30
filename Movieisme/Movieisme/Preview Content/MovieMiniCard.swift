@@ -13,7 +13,6 @@ struct MovieMiniCard: View {
 
     /// Maximum possible rating (usually 5)
     let maxRating: Int = 5
-
     let movie: MoviesRecord
     
     var body: some View {

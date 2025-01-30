@@ -168,10 +168,12 @@ struct SignUp: View {
             focusedField = nil // Clear focus when tapping outside
         }
         .onAppear {
-            movieVM.loadUsers() // Ensure users are loaded
-            movieVM.loadLoggedInUser() // Check for a saved session
+            movieVM.loadUsers()
+            movieVM.loadLoggedInUser() // Load stored session
+            
+            // If the user is already logged in, go directly to Home
             if movieVM.loggedInUser != nil {
-                showSignIn.toggle() // Automatically navigate to Home
+                showSignIn = true
             }
         }
         

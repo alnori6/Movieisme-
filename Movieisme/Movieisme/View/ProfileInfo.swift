@@ -6,12 +6,12 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct ProfileInfo: View {
     
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var movieVM : movieViewModel
-    @StateObject private var imageVM = imageSelectorVM()
     
     @State private var firstName: String = ""
     @State private var lastName: String = ""
@@ -26,51 +26,53 @@ struct ProfileInfo: View {
             
             VStack {
                 Spacer().frame(height: 40)
-                
-                if let user = movieVM.loggedInUser{
-                    ZStack(){
-                        
-                        // Profile Image
+               
+                if let user = movieVM.loggedInUser {
+                ZStack {
+                    
+                    // ✅ Profile Image (Picked Image OR Existing Image)
+                    if let selectedImage = movieVM.selectedImage {
+                        Image(uiImage: selectedImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 78, height: 78)
+                            .clipShape(Circle())
+                    } else {
                         AsyncImage(url: URL(string: user.fields.profileImage)) { image in
                             image.resizable()
                                 .scaledToFill()
-                                .frame(width: 54, height: 60)
+                                .frame(width: 78, height: 78)
                                 .clipShape(Circle())
-                            
                         } placeholder: {
                             ProgressView()
                         }
                         .frame(width: 78, height: 78)
                         .background(Color.white.opacity(0.21))
                         .clipShape(Circle())
-                        
-                        // Camera Icon
-                        if isEditing {
-                            Button(action: {
-                                imageVM.presentImagePicker()
-                            }) {
-                                Image(systemName: "camera")
-                                    .frame(width: 30, height: 24)
-                                    .foregroundColor(.accent)
-                                    .frame(width: 78, height: 78)
-                                    .background(Color.white.opacity(0.5))
-                                    .clipShape(Circle())
-                            }
+                    }
 
+                    // ✅ Edit Mode - Camera Icon (Tap to Pick Image)
+                    if isEditing {
+                        PhotosPicker(selection: $movieVM.photoPickerItem, matching: .images) {
+                            ZStack {
+                                Color.black.opacity(0.4)
+                                    .clipShape(Circle())
+                                Image(systemName: "camera.fill")
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 16, weight: .bold))
+                            }
+                            .frame(width: 78, height: 78)
                         }
                     }
-                    
                 }
-                else{
-                    
-                    Image("person")
-                        .resizable()
-                        .background(Color.white.opacity(0.21))
-                        .frame(width: 78, height: 78)
-                        .clipShape(Circle())
-                    
-                }
-                
+            } else {
+                Image("person")
+                    .resizable()
+                    .background(Color.white.opacity(0.21))
+                    .frame(width: 78, height: 78)
+                    .clipShape(Circle())
+            }
+
                 
                 
                 //MARK: - name
@@ -122,7 +124,6 @@ struct ProfileInfo: View {
                 
                 if !isEditing {
                    Button(action: {
-                       movieVM.logoutUser()
                        showAlertSignOut.toggle()
                    }) {
                        Text("Sign Out")
@@ -159,14 +160,6 @@ struct ProfileInfo: View {
                             // Enter edit mode
                             isEditing = true
                         }
-//                       movieVM.loggedInUser?.fields.name = "\(firstName) \(lastName)"
-//                       isEditing.toggle() // Exit edit mode
-//                        movieVM.updateUserName(firstName: firstName, lastName: lastName){ success in
-//                            if success {
-//                                isEditing.toggle() // Exit edit mode
-//                            }
-//                        }
-                        
                     }) {
                         Text(isEditing ? "Save" : "Edit")
                             .font(.system(size: 16, weight: .medium))
@@ -202,8 +195,8 @@ struct ProfileInfo: View {
                     buttons: [
                         .cancel(),
                         .destructive(
-                            Text("Sign Out")
-//                            action:
+                            Text("Sign Out"),
+                            action: {movieVM.logoutUser()}
                         )
                     ]
                 )

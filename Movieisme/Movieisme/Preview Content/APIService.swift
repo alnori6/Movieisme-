@@ -46,6 +46,19 @@ class APIService {
      }
     
     
+    
+    /// Fetch all directors
+    func fetchDirectors(completion: @escaping (Result<Direcrtors, Error>) -> Void) {
+        guard let url = URL(string: "\(baseURLString)/directors") else {
+            completion(.failure(URLSessionError.invalidURL))
+            return
+        }
+        
+        fetchData(from: url, decodeType: Direcrtors.self, completion: completion)
+    }
+    
+    
+    
     func fetchMovieDirectors(completion: @escaping (Result<MovieDirectors, Error>) -> Void) {
         // Build the full URL: base + "/"
         guard let url = URL(string: "\(baseURLString)/movie_directors") else {
@@ -106,35 +119,113 @@ class APIService {
          fetchData(from: url, decodeType: Users.self, completion: completion)
      }
     
-    // update the api users name after they save it 
-
+    
+    
+    
+    // update the api users name after they save it
+//    func updateUser(user: UsersRecord, completion: @escaping (Result<UsersRecord, Error>) -> Void) {
+//        guard let url = URL(string: "\(baseURLString)/users/\(user.id)") else {
+//            completion(.failure(URLSessionError.invalidURL))
+//            return
+//        }
+//        
+//        var request = URLRequest(url: url)
+//        request.httpMethod = "PUT"
+//        request.addValue(apiKey, forHTTPHeaderField: "Authorization")
+//        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+//        
+//        let body: [String: Any] = [
+//            "fields": [
+//                "name": user.fields.name,
+//                "email": user.fields.email,
+//                "password": user.fields.password,
+//                "profile_image": user.fields.profileImage
+//            ]
+//        ]
+//        
+//        do {
+//            request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+//        } catch {
+//            completion(.failure(error))
+//            return
+//        }
+//        
+//        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+//            if let error = error {
+//                DispatchQueue.main.async {
+//                    completion(.failure(error))
+//                }
+//                return
+//            }
+//            
+//            if let httpResponse = response as? HTTPURLResponse,
+//               !(200...299).contains(httpResponse.statusCode) {
+//                let statusError = NSError(
+//                    domain: "",
+//                    code: httpResponse.statusCode,
+//                    userInfo: [NSLocalizedDescriptionKey : "HTTP \(httpResponse.statusCode)"]
+//                )
+//                DispatchQueue.main.async {
+//                    completion(.failure(statusError))
+//                }
+//                return
+//            }
+//            
+//            guard let data = data else {
+//                let noDataError = NSError(
+//                    domain: "",
+//                    code: 0,
+//                    userInfo: [NSLocalizedDescriptionKey : "No data in response"]
+//                )
+//                DispatchQueue.main.async {
+//                    completion(.failure(noDataError))
+//                }
+//                return
+//            }
+//            
+//            do {
+//                let decodedObject = try JSONDecoder().decode(UsersRecord.self, from: data)
+//                DispatchQueue.main.async {
+//                    completion(.success(decodedObject))
+//                }
+//            } catch {
+//                DispatchQueue.main.async {
+//                    completion(.failure(error))
+//                }
+//            }
+//        }
+//        
+//        task.resume()
+//    }
+    
+    
     func updateUser(user: UsersRecord, completion: @escaping (Result<UsersRecord, Error>) -> Void) {
         guard let url = URL(string: "\(baseURLString)/users/\(user.id)") else {
             completion(.failure(URLSessionError.invalidURL))
             return
         }
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.addValue(apiKey, forHTTPHeaderField: "Authorization")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         let body: [String: Any] = [
             "fields": [
                 "name": user.fields.name,
                 "email": user.fields.email,
                 "password": user.fields.password,
-                "profile_image": user.fields.profileImage
+                "profile_image": user.fields.profileImage // ✅ Ensure this is included!
             ]
         ]
-        
+
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
         } catch {
             completion(.failure(error))
             return
         }
-        
+
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 DispatchQueue.main.async {
@@ -142,7 +233,7 @@ class APIService {
                 }
                 return
             }
-            
+
             if let httpResponse = response as? HTTPURLResponse,
                !(200...299).contains(httpResponse.statusCode) {
                 let statusError = NSError(
@@ -155,7 +246,7 @@ class APIService {
                 }
                 return
             }
-            
+
             guard let data = data else {
                 let noDataError = NSError(
                     domain: "",
@@ -167,7 +258,7 @@ class APIService {
                 }
                 return
             }
-            
+
             do {
                 let decodedObject = try JSONDecoder().decode(UsersRecord.self, from: data)
                 DispatchQueue.main.async {
@@ -179,7 +270,7 @@ class APIService {
                 }
             }
         }
-        
+
         task.resume()
     }
     
@@ -194,19 +285,72 @@ class APIService {
     
     
     
-    
-    
+//    // MARK: - 4) Generic Fetch Method (✅ Debugging Added Here)
+//        private func fetchData<T: Decodable>(from url: URL,
+//                                             decodeType: T.Type,
+//                                             completion: @escaping (Result<T, Error>) -> Void) {
+//            var request = URLRequest(url: url)
+//            request.addValue(apiKey, forHTTPHeaderField: "Authorization")
+//
+//            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+//                
+//                // ✅ Step 1: Check for client-side error
+//                if let error = error {
+//                    DispatchQueue.main.async {
+//                        completion(.failure(error))
+//                    }
+//                    return
+//                }
+//                
+//                // ✅ Step 2: Check HTTP status code
+//                if let httpResponse = response as? HTTPURLResponse,
+//                   !(200...299).contains(httpResponse.statusCode) {
+//                    let statusError = NSError(
+//                        domain: "",
+//                        code: httpResponse.statusCode,
+//                        userInfo: [NSLocalizedDescriptionKey : "HTTP \(httpResponse.statusCode)"]
+//                    )
+//                    DispatchQueue.main.async {
+//                        completion(.failure(statusError))
+//                    }
+//                    return
+//                }
+//                
+//                // ✅ Step 3: Verify we have data
+//                guard let data = data else {
+//                    let noDataError = NSError(
+//                        domain: "",
+//                        code: 0,
+//                        userInfo: [NSLocalizedDescriptionKey : "No data in response"]
+//                    )
+//                    DispatchQueue.main.async {
+//                        completion(.failure(noDataError))
+//                    }
+//                    return
+//                }
+//                
+//                // ✅ Step 4: Debugging - Print Raw JSON Response Before Decoding
+//                let jsonString = String(data: data, encoding: .utf8)
+//                print("📜 Raw JSON Response: \(jsonString ?? "Invalid JSON")")
+//
+//                // ✅ Step 5: Attempt to decode the JSON into T
+//                do {
+//                    let decodedObject = try JSONDecoder().decode(T.self, from: data)
+//                    DispatchQueue.main.async {
+//                        completion(.success(decodedObject))
+//                    }
+//                } catch {
+//                    DispatchQueue.main.async {
+//                        print("❌ JSON Decoding Error: \(error)")
+//                        completion(.failure(error))
+//                    }
+//                }
+//            }
+//            task.resume()
+//        }
     
      
-     /// Fetch all directors
-     func fetchDirectors(completion: @escaping (Result<Direcrtors, Error>) -> Void) {
-         guard let url = URL(string: "\(baseURLString)/directors") else {
-             completion(.failure(URLSessionError.invalidURL))
-             return
-         }
-         
-         fetchData(from: url, decodeType: Direcrtors.self, completion: completion)
-     }
+     
     
      
      // MARK: - 4) Generic Fetch Method
@@ -278,6 +422,72 @@ class APIService {
          
          task.resume()
      }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    func uploadProfileImage(userID: String, imageData: Data, completion: @escaping (Result<String, Error>) -> Void) {
+        guard let url = URL(string: "\(baseURLString)/uploadProfileImage") else {
+            completion(.failure(URLSessionError.invalidURL))
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue(apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("multipart/form-data", forHTTPHeaderField: "Content-Type")
+
+        let boundary = UUID().uuidString
+        let contentType = "multipart/form-data; boundary=\(boundary)"
+        request.setValue(contentType, forHTTPHeaderField: "Content-Type")
+
+        var body = Data()
+
+        // Add Image Data
+        let filename = "profile.jpg"
+        let mimeType = "image/jpeg"
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"\(filename)\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+        body.append(imageData)
+        body.append("\r\n".data(using: .utf8)!)
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+
+        request.httpBody = body
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+
+            guard let data = data, let imageURL = String(data: data, encoding: .utf8) else {
+                completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "Invalid response"])))
+                return
+            }
+
+            completion(.success(imageURL))
+        }.resume()
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
  }
 
  // MARK: - Helper Enum for URL Errors

@@ -18,17 +18,24 @@ struct MovieInfo: View {
     var body: some View {
         
         NavigationStack {
+            
+            
             ScrollView {
                 
-                VStack(){
-                    
+                
+                VStack(alignment: .leading){
+                
                     ZStack() {
                         // Movie Poster
                         AsyncImage(url: URL(string: movie.fields.poster)) { image in
                             image.resizable()
                                 .scaledToFill()
+                                .clipped(antialiased: true)
+                                .padding(.top, -80)
+                                .frame(maxWidth: 390)
                         } placeholder: {
                             ProgressView("Loading...")
+                                .frame(width: 390, height: 444)
                         }
                         
                         
@@ -39,14 +46,13 @@ struct MovieInfo: View {
                         )
                         
                     }
-                    .padding(.top, -60)
-                    .frame(height: 350)
+                    .frame(height: 444)
                     
-                    
+                    // MARK: - the movie details starts here
                     
                     Text(movie.fields.name)
                         .font(.system(size: 28, weight: .bold))
-                        .frame(maxWidth: .infinity, alignment: .leading)
+//                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal)
                     
                     Spacer().frame(height: 40)
@@ -56,46 +62,46 @@ struct MovieInfo: View {
                         GridItem(.fixed(100),spacing: 70)
                     ],alignment: .leading,  spacing: 32){
                         
-                        VStack(spacing: 8){
+                        VStack(alignment: .leading, spacing: 8){
                             Text("Duration")
                                 .font(.system(size: 18, weight: .semibold))
-                                .frame(maxWidth: .infinity, alignment: .leading)
+//                                .frame(maxWidth: .infinity, alignment: .leading)
                             Text(movie.fields.runtime)
                                 .font(.system(size: 15, weight: .medium))
                                 .foregroundColor(Color("Dark4"))
-                                .frame(maxWidth: .infinity, alignment: .leading)
+//                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         
                         
-                        VStack(spacing: 8){
+                        VStack(alignment: .leading, spacing: 8){
                             Text("Language")
                                 .font(.system(size: 18, weight: .semibold))
-                                .frame(maxWidth: .infinity, alignment: .leading)
+//                                .frame(maxWidth: .infinity, alignment: .leading)
                             Text("\(movie.fields.language.joined(separator: ", "))")
                                 .font(.system(size: 15, weight: .medium))
                                 .foregroundColor(Color("Dark4"))
-                                .frame(maxWidth: .infinity, alignment: .leading)
+//                                .frame(maxWidth: .infinity, alignment: .leading)
                             
                         }
                         
-                        VStack(spacing: 8){
+                        VStack(alignment: .leading, spacing: 8){
                             Text("Genre")
                                 .font(.system(size: 18, weight: .semibold))
-                                .frame(maxWidth: .infinity, alignment: .leading)
+//                                .frame(maxWidth: .infinity, alignment: .leading)
                             Text("\(movie.fields.genre.joined(separator: ", "))")
                                 .font(.system(size: 15, weight: .medium))
                                 .foregroundColor(Color("Dark4"))
-                                .frame(maxWidth: .infinity, alignment: .leading)
+//                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         
-                        VStack(spacing: 8){
+                        VStack(alignment: .leading, spacing: 8){
                             Text("Age")
                                 .font(.system(size: 18, weight: .semibold))
-                                .frame(maxWidth: .infinity, alignment: .leading)
+//                                .frame(maxWidth: .infinity, alignment: .leading)
                             Text("+15")
                                 .font(.system(size: 15, weight: .medium))
                                 .foregroundColor(Color("Dark4"))
-                                .frame(maxWidth: .infinity, alignment: .leading)
+//                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         
                     }
@@ -105,31 +111,31 @@ struct MovieInfo: View {
                     
                     Spacer().frame(height: 32)
                     
-                    VStack(spacing: 8){
+                    VStack(alignment: .leading, spacing: 8){
                         Text("Story")
                             .font(.system(size: 18, weight: .semibold))
-                            .frame(maxWidth: .infinity, alignment: .leading)
+//                            .frame(maxWidth: .infinity, alignment: .leading)
                         Text(movie.fields.story)
                             .font(.system(size: 15, weight: .medium))
                             .foregroundColor(Color("Dark4"))
-                            .frame(maxWidth: .infinity, alignment: .leading)
+//                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .padding(.horizontal)
-                    .padding(.trailing, 16)
+
                     
                     
                     //MARK: - rating
                     
                     Spacer().frame(height: 32)
                     
-                    VStack(spacing: 8){
+                    VStack(alignment: .leading, spacing: 8){
                         Text("IMDb Rating")
                             .font(.system(size: 18, weight: .semibold))
-                            .frame(maxWidth: .infinity, alignment: .leading)
+//                            .frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(movie.fields.imDBRating, specifier: "%.1f") / 10")
                             .font(.system(size: 15, weight: .medium))
                             .foregroundColor(Color("Dark4"))
-                            .frame(maxWidth: .infinity, alignment: .leading)
+//                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .padding(.horizontal)
                     
@@ -145,25 +151,25 @@ struct MovieInfo: View {
                     
                     Text("Director")
                         .font(.system(size: 18, weight: .semibold))
-                        .frame(maxWidth: .infinity, alignment: .leading)
+//                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 16)
                         .padding(.horizontal)
                     
                     HStack(spacing: 8){
-                        VStack(spacing: 8){
+                        VStack(alignment: .leading, spacing: 8){
                             
                             if let director = movieVM.getDirectorForMovie(movieID: movie.id) {
                                 
                                 AsyncImage(url: URL(string: director.fields.image)) { image in
                                     image.resizable()
                                         .scaledToFill()
-                                        .offset(x: -15, y: 0)
+//                                        .offset(x: -15, y: 0)
                                         .frame(width: 76, height: 76)
                                         .clipShape(Circle())
                                 } placeholder: {
                                     ProgressView()
                                 }
-                                
+                                .padding(.horizontal)
                                 
                                 Text(director.fields.name)
                                     .font(.system(size: 15, weight: .medium))
@@ -174,10 +180,10 @@ struct MovieInfo: View {
                                 Text("Director not available")
                                     .font(.system(size: 15, weight: .medium))
                                     .foregroundColor(.gray)
+//                                    .padding(.horizontal)
                             }
                             
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal)
                     }
                     
@@ -190,10 +196,9 @@ struct MovieInfo: View {
                     // MARK: - Actors getActorsForMovie
                     Text("Stars")
                         .font(.system(size: 18, weight: .semibold))
-                        .frame(maxWidth: .infinity, alignment: .leading)
+//                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 16)
                         .padding(.horizontal)
-                    
                     
                     
                     
@@ -202,6 +207,7 @@ struct MovieInfo: View {
                         Text("Actors not available")
                             .font(.system(size: 15, weight: .medium))
                             .foregroundColor(.gray)
+                            .padding(.horizontal)
                     } else {
                         HStack(spacing: 16) {
                         ForEach(actors, id: \.id) { actor in
@@ -212,6 +218,7 @@ struct MovieInfo: View {
                                             .scaledToFill()
                                             .frame(width: 76, height: 76)
                                             .clipShape(Circle())
+                                            
                                     } placeholder: {
                                         ProgressView()
                                     }
@@ -220,11 +227,11 @@ struct MovieInfo: View {
                                     Text(actor.fields.name)
                                         .font(.system(size: 15, weight: .medium))
                                         .foregroundColor(Color("Dark4"))
+                                        .frame(maxWidth: .infinity)
                                 }
                             }
                             
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal)
                         
                     }
@@ -250,30 +257,51 @@ struct MovieInfo: View {
                     
                     Text("Rating  & Reviews")
                         .font(.system(size: 18, weight: .semibold))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.bottom, 16)
+//                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.bottom, 8)
                         .padding(.horizontal)
 
                     Text("\(ratingDouble, specifier: "%.1f")")
                         .font(.system(size: 39, weight: .semibold))
                         .foregroundColor(Color("Dark4"))
-                        .frame(maxWidth: .infinity, alignment: .leading)
+//                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 4)
                         .padding(.horizontal)
                     
                     Text("out of 5")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(Color("Dark4"))
-                        .frame(maxWidth: .infinity, alignment: .leading)
+//                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal,5)
                         .padding(.horizontal)
                     
                     //MARK: - Ratings from other watchers
                     
+                    Spacer().frame(height: 32)
                     
                     
+
                     
-                    
+                    let filteredReviews = movieVM.getReviewsForMovie(movieID: movie.id)
+
+                    if filteredReviews.isEmpty {
+                        Text("No reviews available.")
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundColor(.gray)
+                            .padding()
+                    } else {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 16) {
+                                ForEach(filteredReviews, id: \.review.id) { reviewUser in
+                                    ReviewsCard(movie: movie)
+                                        .environmentObject(movieVM)
+                                }
+                            }
+                        }
+                    }
+//                    
+//                    
+
                     
                     
                     
@@ -282,13 +310,21 @@ struct MovieInfo: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                
             }// end scroll view
             .onAppear(){
+                print("🔄 Loading data...")
+                movieVM.loadUsers()
                 movieVM.loadDirectors()
                 movieVM.loadMovieDirectors()
                 movieVM.loadActors()
                 movieVM.loadMovieActors()
+                movieVM.loadReviews()
+                movieVM.loadMovies()
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        print("✅ Total Reviews Loaded: \(movieVM.reviews.count)")
+                        print("✅ Total Users Loaded: \(movieVM.users.count)")
+                    }
             }
             .navigationBarBackButtonHidden(true)
             .toolbar(){
@@ -307,9 +343,9 @@ struct MovieInfo: View {
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing){
-                    Button(action: {
+                    
+                    ShareLink(item: URL(string: "https://developer.apple.com/xcode/swiftui")!) {
                         
-                    }){
                         Image(systemName: "square.and.arrow.up")
                             .resizable()
                             .frame(width: 14, height: 20)
@@ -319,20 +355,24 @@ struct MovieInfo: View {
                             .background(Color.black.opacity(0.5))
                             .clipShape(Circle())
                     }
+
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
-                        movieVM.saveMovie(movie: movie)
-                    }) {
-                        Image(systemName: "bookmark.fill")
-                            .resizable()
-                            .frame(width: 12, height: 18)
-                            .foregroundColor(.accent)
-                            .frame(width: 32, height: 32)
-                            .background(Color.black.opacity(0.5))
-                            .clipShape(Circle())
-                        
-                    }
+                            if movieVM.isMovieSaved(movie: movie) {
+                                movieVM.removeSavedMovie(movie: movie) // 🔥 Remove if already saved
+                            } else {
+                                movieVM.saveMovie(movie: movie) // 🔥 Save if not saved
+                            }
+                        }) {
+                            Image(systemName: movieVM.isMovieSaved(movie: movie) ? "bookmark.fill" : "bookmark") // ✅ Dynamic icon
+                                .resizable()
+                                .frame(width: 12, height: 18)
+                                .foregroundColor(movieVM.isMovieSaved(movie: movie) ? .accent : .accent) // ✅ Change color
+                                .frame(width: 32, height: 32)
+                                .background(Color.black.opacity(0.5))
+                                .clipShape(Circle())
+                        }
                 }
             }
             .toolbarBackgroundVisibility(.automatic, for: .navigationBar)
@@ -342,18 +382,16 @@ struct MovieInfo: View {
 }
 
 #Preview {
-    //    MovieInfo()
-    //        .environmentObject(movieViewModel())
     
     MovieInfo(
         movie: MoviesRecord(
-            id: "reckJmZ458CZcLlUd",
+            id: "reca1oIIcB4R3HVgw",
             createdTime: "0000-00-00T00:00:00Z",
             fields: IndigoFields(
                 name: "Top Gun",
-                rating: "",
+                rating: "R",
                 genre: ["Action"],
-                poster: "https://i.pinimg.com/736x/0e/e3/41/0ee34190d837ddf0048c2caf14a2ff8e.jpg",
+                poster: "https://i.imghippo.com/files/snS1877oNU.jpg",
                 language: ["English"],
                 imDBRating: 9.6,
                 runtime: "2 hr 9 min",
@@ -362,15 +400,6 @@ struct MovieInfo: View {
             )
         )
         
-        //      director: DirecrtorsRecord(
-        //        id: "1",
-        //        createdTime: "0000-00-00T00:00:00Z",
-        //        fields: FluffyFields(
-        //            name: "Frank Darabont",
-        //            image: "https://spaces.filmstories.co.uk/uploads/2024/09/Frank-Darabont.jpg"
-        //        )
-        //
-        //      )
     ).environmentObject(movieViewModel())
     
 }

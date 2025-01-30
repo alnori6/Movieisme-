@@ -24,7 +24,7 @@ struct Profile: View {
                             AsyncImage(url: URL(string: user.fields.profileImage)) { image in
                                 image.resizable()
                                     .scaledToFill()
-                                    .frame(width: 39, height: 43)
+                                    .frame(width: 56, height: 56)
                                     .clipShape(Circle())
                                     
                             } placeholder: {
@@ -97,34 +97,36 @@ struct Profile: View {
                     
                     
                     let savedMovies = movieVM.getSavedMovies()
+
                     if !savedMovies.isEmpty {
-                        
-                        ScrollView(.vertical, showsIndicators: false){
-                            HStack(spacing: 16){
-                                ForEach(savedMovies.indices, id: \.self) { index in
-                                    MovieMiniCard(movie: savedMovies[index])
-                                        .tag(index)
+                        ScrollView(.vertical, showsIndicators: false) {
+                            HStack(spacing: 16) {
+                                ForEach(savedMovies, id: \.id) { movie in
+                                    MovieMiniCard(movie: movie)
+                                        .frame(width: 172, height: 237)
+                                        .cornerRadius(8)
                                 }
                             }
-                            
+                            .padding(.horizontal)
+                            .frame(maxWidth: 358)
                         }
-                        .padding(.horizontal)
-                        
+                    } else {
+                        VStack {
+                            Spacer().frame(height: 120)
+                            Image("logo_back")
+                                .resizable()
+                                .frame(width: 73, height: 50)
+                                .padding()
+                            
+                            Text("No saved movies yet, start saving your favorites.")
+                                .font(.system(size: 14, weight: .medium))
+                                .frame(width: 219)
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(Color("Dark3"))
+                        }
+                        .padding(.top, 32)
                     }
-                    
-                    Spacer()
-                        .frame(height: 150)
-                    
-                    Image("logo_back")
-                        .resizable()
-                        .frame(width: 73, height: 50)
-                        .padding()
-                    
-                    Text("No saved movies yet , start save your favourites.")
-                        .font(.system(size: 14, weight: .medium))
-                        .frame(width: 219)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(Color("Dark3"))
+                                        
                     
                     
                 }// end big vstack

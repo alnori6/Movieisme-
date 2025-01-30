@@ -36,12 +36,13 @@
 				"Launch Screen.storyboard",
 				"Preview Content/MovieCardView.swift",
 				"Preview Content/MovieMiniCard.swift",
-				"View Model/imageSelectorVM.swift",
+				"Preview Content/ReviewsCard.swift",
 				"View Model/movieViewModel.swift",
 				View/Home.swift,
 				View/MovieInfo.swift,
 				View/Profile.swift,
 				View/ProfileInfo.swift,
+				View/SeeMore.swift,
 				View/SignUp.swift,
 			);
 			target = FCBAE2DA2D392501007545C4 /* MovieismeTests */;
@@ -52,12 +53,13 @@
 				"Launch Screen.storyboard",
 				"Preview Content/MovieCardView.swift",
 				"Preview Content/MovieMiniCard.swift",
-				"View Model/imageSelectorVM.swift",
+				"Preview Content/ReviewsCard.swift",
 				"View Model/movieViewModel.swift",
 				View/Home.swift,
 				View/MovieInfo.swift,
 				View/Profile.swift,
 				View/ProfileInfo.swift,
+				View/SeeMore.swift,
 				View/SignUp.swift,
 			);
 			target = FCBAE2E42D392501007545C4 /* MovieismeUITests */;

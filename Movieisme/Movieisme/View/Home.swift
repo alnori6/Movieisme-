@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct Home: View {
-    @State var movie: String = ""
     
 //    @StateObject private var movieVM = movieViewModel()
     @EnvironmentObject private var movieVM : movieViewModel
     @State private var selectedPage = 0 // To track the current page
+    
+    @State private var searchQuery = ""
+    @State private var searchResults: [SearchResult] = []
     
     var body: some View {
         
@@ -22,7 +24,7 @@ struct Home: View {
                 Spacer().frame(height: 16)
                 VStack(alignment: .leading) {
                     HStack {
-                        TextField("Search for movies, actors...", text: $movie)
+                        TextField("Search for movies, actors...", text: $searchQuery)
                             .padding(8)
                             .padding(.horizontal, 24)
                             .background(Color.white.opacity(0.2))
@@ -35,16 +37,24 @@ struct Home: View {
                                         .padding(.leading, 8)
                                 }
                             )
+                            .onChange(of: searchQuery) { newValue in
+                                searchResults = movieVM.searchMoviesActorsDirectors(query: newValue)
+                            }
                         
-                        if !movie.isEmpty {
-                            Button(action: {
-                                movie = "" // Clear the search query
-                            }) {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(.gray)
-                                    .padding(.trailing, 8)
+                        // 🔎 Display Results
+                        if !searchResults.isEmpty {
+                            List(searchResults) { result in
+                                HStack {
+                                    Text(result.name)
+                                        .font(.system(size: 16, weight: .medium))
+                                    Spacer()
+                                    Text(result.type == .movie ? "🎬 Movie" : result.type == .actor ? "🎭 Actor" : "🎬 Director")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(.gray)
+                                }
                             }
                         }
+
                     }
                     .padding(.horizontal)
                     
@@ -106,15 +116,17 @@ struct Home: View {
                         
                         Spacer()
                         
-                        Text("Show more")
-                            .foregroundColor(.accent)
-                            .font(.system(size: 14, weight: .medium))
+                        NavigationLink(destination: SeeMore(title: "Drama Movies", movies: movieVM.dramaMovies)) {
+                                Text("Show more")
+                                    .foregroundColor(.accentColor)
+                                    .font(.system(size: 14, weight: .medium))
+                            }
                     }
                     .padding()
                     
                     ScrollView(.horizontal, showsIndicators: false){
                         HStack(spacing: 16){
-                            ForEach(movieVM.dramaMovies.indices, id: \.self) { index in
+                            ForEach(movieVM.dramaMovies.prefix(4).indices, id: \.self) { index in
                                 NavigationLink(destination: MovieInfo(movie: movieVM.dramaMovies[index])) {
                                     MovieMiniCard(movie: movieVM.dramaMovies[index])
                                         .tag(index)
@@ -133,16 +145,18 @@ struct Home: View {
                         Text(
                             movieVM.movies.contains { $0.fields.genre.contains("Comedy") }
                             ? "Comedy"
-                            : "Comedy"
+                            : ""
                         )
                         .font(.system(size: 22, weight: .semibold))
 //                        .padding(.leading, 16)
                         
                         Spacer()
                         
-                        Text("Show more")
-                            .foregroundColor(.accent)
-                            .font(.system(size: 14, weight: .medium))
+                        NavigationLink(destination: SeeMore(title: "Comedy Movies", movies: movieVM.comedyMovies)) {
+                                Text("Show more")
+                                    .foregroundColor(.accentColor)
+                                    .font(.system(size: 14, weight: .medium))
+                            }
                     }
                     .padding()
                     
@@ -160,19 +174,130 @@ struct Home: View {
                     .padding(.horizontal)
                     
                     
+                    
+                    
+                    //MARK: - Action part
+                    Spacer().frame(height: 40)
+                    
+                    HStack(){
+                        Text(
+                            movieVM.movies.contains { $0.fields.genre.contains("Action") }
+                            ? "Action"
+                            : ""
+                        )
+                        .font(.system(size: 22, weight: .semibold))
+//                        .padding(.leading, 16)
+                        
+                        Spacer()
+                        
+                        NavigationLink(destination: SeeMore(title: "Action Movies", movies: movieVM.ActionMovies)) {
+                                Text("Show more")
+                                    .foregroundColor(.accentColor)
+                                    .font(.system(size: 14, weight: .medium))
+                            }
+                    }
+                    .padding()
+                    
+                    ScrollView(.horizontal, showsIndicators: false){
+                        HStack(spacing: 16){
+                            ForEach(movieVM.ActionMovies.indices, id: \.self) { index in
+                                NavigationLink(destination: MovieInfo(movie: movieVM.ActionMovies[index])) {
+                                    MovieMiniCard(movie: movieVM.ActionMovies[index])
+                                        .tag(index)
+                                }.buttonStyle(PlainButtonStyle())
+                            }
+                        }
+                        
+                    }
+                    .padding(.horizontal)
+                    
+                    
+
+                    
+                    //MARK: - ThrillerMovies part
+                    Spacer().frame(height: 40)
+                    
+                    HStack(){
+                        Text(
+                            movieVM.movies.contains { $0.fields.genre.contains("Thriller") }
+                            ? "Thriller"
+                            : ""
+                        )
+                        .font(.system(size: 22, weight: .semibold))
+//                        .padding(.leading, 16)
+                        
+                        Spacer()
+                        
+                        NavigationLink(destination: SeeMore(title: "Thriller Movies", movies: movieVM.ThrillerMovies)) {
+                                Text("Show more")
+                                    .foregroundColor(.accentColor)
+                                    .font(.system(size: 14, weight: .medium))
+                            }
+                    }
+                    .padding()
+                    
+                    ScrollView(.horizontal, showsIndicators: false){
+                        HStack(spacing: 16){
+                            ForEach(movieVM.ThrillerMovies.indices, id: \.self) { index in
+                                NavigationLink(destination: MovieInfo(movie: movieVM.ThrillerMovies[index])) {
+                                    MovieMiniCard(movie: movieVM.ThrillerMovies[index])
+                                        .tag(index)
+                                }.buttonStyle(PlainButtonStyle())
+                            }
+                        }
+                        
+                    }
+                    .padding(.horizontal)
+                    
+                    
+                    
+                    
+                    //MARK: - CrimeMovies part
+                    Spacer().frame(height: 40)
+                    
+                    HStack(){
+                        Text(
+                            movieVM.movies.contains { $0.fields.genre.contains("Crime") }
+                            ? "Crime"
+                            : ""
+                        )
+                        .font(.system(size: 22, weight: .semibold))
+//                        .padding(.leading, 16)
+                        
+                        Spacer()
+                        
+                        Text("Show more")
+                            .foregroundColor(.accent)
+                            .font(.system(size: 14, weight: .medium))
+                    }
+                    .padding()
+                    
+                    ScrollView(.horizontal, showsIndicators: false){
+                        HStack(spacing: 16){
+                            ForEach(movieVM.CrimeMovies.indices, id: \.self) { index in
+                                NavigationLink(destination: MovieInfo(movie: movieVM.CrimeMovies[index])) {
+                                    MovieMiniCard(movie: movieVM.CrimeMovies[index])
+                                        .tag(index)
+                                }.buttonStyle(PlainButtonStyle())
+                            }
+                        }
+                        
+                    }
+                    .padding(.horizontal)
+                    
+                    
+                    
+                    
+                    
+                    
                 }// end of the big vstack
-                
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                
-                
-                    
             } // end scroll view
             .toolbar() {
                 
                 ToolbarItem(placement: .navigationBarLeading) {
                     Text("Movies Center")
-                        .foregroundColor(.white)
                         .font(.system(size: 28, weight: .bold, design: .default))
 //                        .padding(.bottom, 16)
                 }
@@ -184,7 +309,7 @@ struct Home: View {
                             AsyncImage(url: URL(string: user.fields.profileImage)) { image in
                                 image.resizable()
                                     .scaledToFill()
-                                    .frame(width: 28, height: 31)
+                                    .frame(width: 41, height: 41)
                                     .clipShape(Circle())
                                     
                             } placeholder: {

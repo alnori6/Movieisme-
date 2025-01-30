@@ -36,8 +36,7 @@ struct ReviewsRecord: Codable, Identifiable {
 // MARK: - PurpleFields
 struct PurpleFields: Codable {
     let reviewText: String
-    let rate: Int
-//    let movieID: ID
+    let rate: Double
     let movieID: String
     let userID: String
 
@@ -49,11 +48,10 @@ struct PurpleFields: Codable {
     }
 }
 
-//enum ID: String, Codable {
-//    case recD3RGUbacFapkel = "recD3RGUbacFapkel"
-//    case reca1OIICB4R3HVgw = "reca1oIIcB4R3HVgw"
-//    case recsMLdAxVeCETUOO = "recsMLdAxVeCETUOo"
-//}
+
+
+
+
 
 // MARK: - Direcrtors
 struct Direcrtors: Codable {
@@ -141,35 +139,8 @@ struct ActorFields: Codable {
 }
 
 
-//struct Actors: Codable {
-//    let records: [DirecrtorsRecord]?
-//    let name: String?
-//    let founded: Int?
-//    let members: [String]?
-//}
-//
-//// MARK: - MovieActors
-//struct MovieActors: Codable {
-//    let records: [MovieActorsRecord]
-//}
-//
-//// MARK: - MovieActorsRecord
-//struct MovieActorsRecord: Codable, Identifiable {
-//    let id, createdTime: String
-//    let fields: StickyFields
-//}
-//
-//// MARK: - StickyFields
-//struct StickyFields: Codable {
-//    let actorID: String
-////    let movieID: ID
-//    let movieID: String
-//
-//    enum CodingKeys: String, CodingKey {
-//        case actorID = "actor_id"
-//        case movieID = "movie_id"
-//    }
-//}
+
+
 
 // MARK: - Movies
 struct Movies: Codable {
@@ -215,7 +186,7 @@ struct UsersRecord: Codable , Identifiable{
 // MARK: - TentacledFields
 struct TentacledFields: Codable {
     var name, password, email: String
-    let profileImage: String
+    var profileImage: String
     var savedMovies: [MoviesRecord] = [] // to store saved movies for each user
 
     enum CodingKeys: String, CodingKey {
@@ -225,3 +196,15 @@ struct TentacledFields: Codable {
 }
 
 
+
+
+
+enum SearchResultType {
+    case movie, actor, director
+}
+
+struct SearchResult: Identifiable {
+    let id: String
+    let type: SearchResultType
+    let name: String
+}
