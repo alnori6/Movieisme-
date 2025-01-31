@@ -16,9 +16,9 @@
 - 📷 **Profile Customization**: Upload and manage profile images.
 
 ## 📱 Screenshots
-| Home Screen | Movie Info | Search | Profile |
+| Home Screen | Movie Info | Login | Profile |
 |-------------|------------|--------|--------|
-| ![Home](https://your-image-url.com) | ![Movie Info](https://your-image-url.com) | ![Search](https://your-image-url.com) | ![Profile](https://your-image-url.com) |
+|  <img width="447" alt="Screenshot 2025-01-16 at 12 01 03 pm" src="https://github.com/user-attachments/assets/f8cb062d-3aa3-4e49-bef0-b8f56a102d05" /> | <img width="441" alt="Screenshot 2025-01-16 at 12 02 00 pm" src="https://github.com/user-attachments/assets/d61c3156-3e42-41e8-9cd3-bab214c5f276" />  | <img width="452" alt="Screenshot 2025-01-16 at 11 38 48 am" src="https://github.com/user-attachments/assets/9262ad68-3a02-4b98-a94a-625ea2d02e27" />  |  <img width="451" alt="Screenshot 2025-01-16 at 12 38 08 pm" src="https://github.com/user-attachments/assets/31b04da4-5f82-40c1-8504-9eb83de1d923" />   |
 
 ## 🛠 Technology Stack
 - **SwiftUI** – Declarative UI framework for building iOS applications.
