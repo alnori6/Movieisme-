@@ -1,6 +1,6 @@
 # 🎬 Movieisme
 
-![Movieisme Banner](<img width="697" alt="movies app" src="https://github.com/user-attachments/assets/4f32ac30-9d51-410b-92d8-db4dd5129fca" />)
+<img width="697" alt="movies app" src="https://github.com/user-attachments/assets/4f32ac30-9d51-410b-92d8-db4dd5129fca" />
 
 
 ## 📌 Overview
