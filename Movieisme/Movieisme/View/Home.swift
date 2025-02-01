@@ -9,61 +9,28 @@ import SwiftUI
 
 struct Home: View {
     
-//    @StateObject private var movieVM = movieViewModel()
+    //    @StateObject private var movieVM = movieViewModel()
     @EnvironmentObject private var movieVM : movieViewModel
     @State private var selectedPage = 0 // To track the current page
     
+    
     @State private var searchQuery = ""
-    @State private var searchResults: [SearchResult] = []
     
     var body: some View {
         
         NavigationStack{
             
-            ScrollView{
-                Spacer().frame(height: 16)
-                VStack(alignment: .leading) {
-                    HStack {
-                        TextField("Search for movies, actors...", text: $searchQuery)
-                            .padding(8)
-                            .padding(.horizontal, 24)
-                            .background(Color.white.opacity(0.2))
-                            .cornerRadius(8)
-                            .overlay(
-                                HStack {
-                                    Image(systemName: "magnifyingglass")
-                                        .foregroundColor(.gray)
-                                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                                        .padding(.leading, 8)
-                                }
-                            )
-                            .onChange(of: searchQuery) { newValue in
-                                searchResults = movieVM.searchMoviesActorsDirectors(query: newValue)
-                            }
-                        
-                        // 🔎 Display Results
-                        if !searchResults.isEmpty {
-                            List(searchResults) { result in
-                                HStack {
-                                    Text(result.name)
-                                        .font(.system(size: 16, weight: .medium))
-                                    Spacer()
-                                    Text(result.type == .movie ? "🎬 Movie" : result.type == .actor ? "🎭 Actor" : "🎬 Director")
-                                        .font(.system(size: 14))
-                                        .foregroundColor(.gray)
-                                }
-                            }
-                        }
-
-                    }
-                    .padding(.horizontal)
+            VStack(alignment: .leading) {
+               
+                
+                ScrollView{
                     
                     Spacer().frame(height: 24)
                     
                     Text("High Rated")
                         .font(.system(size: 22, weight: .semibold, design: .default))
                         .padding(.horizontal)
-
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         
                     Spacer().frame(height: 16)
                     
@@ -75,7 +42,7 @@ struct Home: View {
                                     .tag(index)
                             }.buttonStyle(.plain)
                             
-//                                .environmentObject(movieVM)// Use the MovieCard component here
+                            //                                .environmentObject(movieVM)// Use the MovieCard component here
                         }
                         
                     }
@@ -84,10 +51,10 @@ struct Home: View {
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 424)
-                   .tabViewStyle(.page(indexDisplayMode: .never))
-                   .containerRelativeFrame(Axis.Set.horizontal, alignment: .center)
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                    .containerRelativeFrame(Axis.Set.horizontal, alignment: .center)
                     
-                   
+                    
                     // Custom page indicator
                     HStack(spacing: 8) {
                         Spacer()
@@ -112,15 +79,15 @@ struct Home: View {
                             : " "
                         )
                         .font(.system(size: 22, weight: .semibold))
-//                        .padding(.leading, 16)
+                        //                        .padding(.leading, 16)
                         
                         Spacer()
                         
                         NavigationLink(destination: SeeMore(title: "Drama Movies", movies: movieVM.dramaMovies)) {
-                                Text("Show more")
-                                    .foregroundColor(.accentColor)
-                                    .font(.system(size: 14, weight: .medium))
-                            }
+                            Text("Show more")
+                                .foregroundColor(.accentColor)
+                                .font(.system(size: 14, weight: .medium))
+                        }
                     }
                     .padding()
                     
@@ -148,21 +115,21 @@ struct Home: View {
                             : ""
                         )
                         .font(.system(size: 22, weight: .semibold))
-//                        .padding(.leading, 16)
+                        //                        .padding(.leading, 16)
                         
                         Spacer()
                         
                         NavigationLink(destination: SeeMore(title: "Comedy Movies", movies: movieVM.comedyMovies)) {
-                                Text("Show more")
-                                    .foregroundColor(.accentColor)
-                                    .font(.system(size: 14, weight: .medium))
-                            }
+                            Text("Show more")
+                                .foregroundColor(.accentColor)
+                                .font(.system(size: 14, weight: .medium))
+                        }
                     }
                     .padding()
                     
                     ScrollView(.horizontal, showsIndicators: false){
                         HStack(spacing: 16){
-                            ForEach(movieVM.comedyMovies.indices, id: \.self) { index in
+                            ForEach(movieVM.comedyMovies.indices.prefix(4), id: \.self) { index in
                                 NavigationLink(destination: MovieInfo(movie: movieVM.comedyMovies[index])) {
                                     MovieMiniCard(movie: movieVM.comedyMovies[index])
                                         .tag(index)
@@ -186,21 +153,21 @@ struct Home: View {
                             : ""
                         )
                         .font(.system(size: 22, weight: .semibold))
-//                        .padding(.leading, 16)
+                        //                        .padding(.leading, 16)
                         
                         Spacer()
                         
                         NavigationLink(destination: SeeMore(title: "Action Movies", movies: movieVM.ActionMovies)) {
-                                Text("Show more")
-                                    .foregroundColor(.accentColor)
-                                    .font(.system(size: 14, weight: .medium))
-                            }
+                            Text("Show more")
+                                .foregroundColor(.accentColor)
+                                .font(.system(size: 14, weight: .medium))
+                        }
                     }
                     .padding()
                     
                     ScrollView(.horizontal, showsIndicators: false){
                         HStack(spacing: 16){
-                            ForEach(movieVM.ActionMovies.indices, id: \.self) { index in
+                            ForEach(movieVM.ActionMovies.indices.prefix(4), id: \.self) { index in
                                 NavigationLink(destination: MovieInfo(movie: movieVM.ActionMovies[index])) {
                                     MovieMiniCard(movie: movieVM.ActionMovies[index])
                                         .tag(index)
@@ -212,7 +179,7 @@ struct Home: View {
                     .padding(.horizontal)
                     
                     
-
+                    
                     
                     //MARK: - ThrillerMovies part
                     Spacer().frame(height: 40)
@@ -224,21 +191,21 @@ struct Home: View {
                             : ""
                         )
                         .font(.system(size: 22, weight: .semibold))
-//                        .padding(.leading, 16)
+                        //                        .padding(.leading, 16)
                         
                         Spacer()
                         
                         NavigationLink(destination: SeeMore(title: "Thriller Movies", movies: movieVM.ThrillerMovies)) {
-                                Text("Show more")
-                                    .foregroundColor(.accentColor)
-                                    .font(.system(size: 14, weight: .medium))
-                            }
+                            Text("Show more")
+                                .foregroundColor(.accentColor)
+                                .font(.system(size: 14, weight: .medium))
+                        }
                     }
                     .padding()
                     
                     ScrollView(.horizontal, showsIndicators: false){
                         HStack(spacing: 16){
-                            ForEach(movieVM.ThrillerMovies.indices, id: \.self) { index in
+                            ForEach(movieVM.ThrillerMovies.indices.prefix(4), id: \.self) { index in
                                 NavigationLink(destination: MovieInfo(movie: movieVM.ThrillerMovies[index])) {
                                     MovieMiniCard(movie: movieVM.ThrillerMovies[index])
                                         .tag(index)
@@ -262,7 +229,7 @@ struct Home: View {
                             : ""
                         )
                         .font(.system(size: 22, weight: .semibold))
-//                        .padding(.leading, 16)
+                        //                        .padding(.leading, 16)
                         
                         Spacer()
                         
@@ -274,7 +241,7 @@ struct Home: View {
                     
                     ScrollView(.horizontal, showsIndicators: false){
                         HStack(spacing: 16){
-                            ForEach(movieVM.CrimeMovies.indices, id: \.self) { index in
+                            ForEach(movieVM.CrimeMovies.indices.prefix(4), id: \.self) { index in
                                 NavigationLink(destination: MovieInfo(movie: movieVM.CrimeMovies[index])) {
                                     MovieMiniCard(movie: movieVM.CrimeMovies[index])
                                         .tag(index)
@@ -287,94 +254,67 @@ struct Home: View {
                     
                     
                     
-                    
-                    
-                    
-                }// end of the big vstack
+                } // end scroll view
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-            } // end scroll view
-            .toolbar() {
+//                placement: .navigationBarDrawer(displayMode: .always),
                 
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Text("Movies Center")
-                        .font(.system(size: 28, weight: .bold, design: .default))
-//                        .padding(.bottom, 16)
-                }
+          
                 
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: Profile() .environmentObject(movieVM)
-                                   , label: {
-                        if let user = movieVM.loggedInUser {
-                            AsyncImage(url: URL(string: user.fields.profileImage)) { image in
-                                image.resizable()
+                
+            }// end of the big vstack
+            .toolbar(){
+                    // MARK: - Custom Navigation Bar
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Text("Movies Center")
+                            .font(.system(size: 28, weight: .bold))
+                            
+                    }
+                    
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        NavigationLink(destination: Profile().environmentObject(movieVM)) {
+                            if let user = movieVM.loggedInUser {
+                                AsyncImage(url: URL(string: user.fields.profileImage)) { image in
+                                    image.resizable()
+                                        .scaledToFill()
+                                        .frame(width: 41, height: 41)
+                                        .clipShape(Circle())
+                                } placeholder: {
+                                    ProgressView()
+                                }
+                                .frame(width: 41, height: 41)
+                                .background(Color.white.opacity(0.21))
+                                .clipShape(Circle())
+                                .ignoresSafeArea(.all)
+                            } else {
+                                Image(systemName: "person.circle")
+                                    .resizable()
                                     .scaledToFill()
                                     .frame(width: 41, height: 41)
-                                    .clipShape(Circle())
-                                    
-                            } placeholder: {
-                                ProgressView()
+                                    .ignoresSafeArea(.all)
                             }
-                            .frame(width: 41, height: 41)
-                            .background(Color.white.opacity(0.21))
-                            .clipShape(Circle())
+                        }.padding(.bottom, 4)
                             
-
-                            
-                        }else {
-                            Image(systemName: "person.circle")
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 41, height: 41)
-                                
-                        }
-                    })
+                    }
                     
-                        
                 }
-                
-//                ToolbarItem(placement: .principal){
-//                    
-//                    HStack {
-//                       TextField("Search for movies, actors...", text: $movie)
-//                           .padding(8)
-//                           .padding(.horizontal, 24)
-//                           .background(Color.white.opacity(0.2))
-//                           .cornerRadius(8)
-//                           .overlay(
-//                               HStack {
-//                                   Image(systemName: "magnifyingglass")
-//                                       .foregroundColor(.gray)
-//                                       .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-//                                       .padding(.leading, 8)
-//                               }
-//                           )
-//                       
-//                       if !movie.isEmpty {
-//                           Button(action: {
-//                               movie = "" // Clear the search query
-//                           }) {
-//                               Image(systemName: "xmark.circle.fill")
-//                                   .foregroundColor(.gray)
-//                                   .padding(.trailing, 8)
-//                           }
-//                       }
-//                   }
-//
-//                }
-                
-                
-                
-            } // end toolbar
-            
-            
-            
-            
+                .searchable(text: $searchQuery ,placement: .navigationBarDrawer(displayMode: .always), prompt: "Search for movies, actors...") {
+                    // Suggestions for search
+                    Text("Action").searchCompletion("Action")
+                    Text("Drama").searchCompletion("Drama")
+                    Text("Comedy").searchCompletion("Comedy")
+                    
+                    ForEach(movieVM.filteredResults) { result in
+                            Text(result.name).searchCompletion(result.name)
+                    }
+                }
+                .searchPresentationToolbarBehavior(.avoidHidingContent)
             
         } // end navgation
+        
             
         
-       
+        
         
         
     }
@@ -385,13 +325,3 @@ struct Home: View {
         .environmentObject(movieViewModel())
 }
 
-
-
-//                   .padding(.horizontal, 8)
-//                   .frame(height: 36)
-//                    .searchable(text: $movie,placement: .navigationBarDrawer(displayMode: .always), prompt: "Search for movies, actors...") {
-//                        // Suggestion items can be added here
-//                        Text("Action").searchCompletion("Action")
-//                        Text("Drama").searchCompletion("Drama")
-//                        Text("Comedy").searchCompletion("Comedy")
-//                    }

@@ -94,24 +94,48 @@ class movieViewModel: ObservableObject {
     //=====================================================
     
     
-    func searchMoviesActorsDirectors(query: String) -> [SearchResult] {
-        guard !query.isEmpty else { return [] }
+//    func searchMoviesActorsDirectors(query: String) -> [SearchResult] {
+//        guard !query.isEmpty else { return [] }
+//
+//        var results: [SearchResult] = []
+//        
+//        // 🔎 Search in Movies
+//        let matchingMovies = movies.filter { $0.fields.name.localizedCaseInsensitiveContains(query) }
+//        results.append(contentsOf: matchingMovies.map { SearchResult(id: $0.id, type: .movie, name: $0.fields.name) })
+//        
+//        // 🔎 Search in Actors
+//        let matchingActors = actors.filter { $0.fields.name.localizedCaseInsensitiveContains(query) }
+//        results.append(contentsOf: matchingActors.map { SearchResult(id: $0.id, type: .actor, name: $0.fields.name) })
+//        
+//        // 🔎 Search in Directors
+//        let matchingDirectors = directors.filter { $0.fields.name.localizedCaseInsensitiveContains(query) }
+//        results.append(contentsOf: matchingDirectors.map { SearchResult(id: $0.id, type: .director, name: $0.fields.name) })
+//        
+//        return results
+//    }
+    
+    @Published var searchQuery: String = ""
 
-        var results: [SearchResult] = []
-        
-        // 🔎 Search in Movies
-        let matchingMovies = movies.filter { $0.fields.name.localizedCaseInsensitiveContains(query) }
-        results.append(contentsOf: matchingMovies.map { SearchResult(id: $0.id, type: .movie, name: $0.fields.name) })
-        
-        // 🔎 Search in Actors
-        let matchingActors = actors.filter { $0.fields.name.localizedCaseInsensitiveContains(query) }
-        results.append(contentsOf: matchingActors.map { SearchResult(id: $0.id, type: .actor, name: $0.fields.name) })
-        
-        // 🔎 Search in Directors
-        let matchingDirectors = directors.filter { $0.fields.name.localizedCaseInsensitiveContains(query) }
-        results.append(contentsOf: matchingDirectors.map { SearchResult(id: $0.id, type: .director, name: $0.fields.name) })
-        
-        return results
+    var filteredResults: [SearchResult] {
+        if searchQuery.isEmpty {
+            return []
+        } else {
+            var results: [SearchResult] = []
+
+            // 🔍 Search in Movies
+            let matchingMovies = movies.filter { $0.fields.name.localizedCaseInsensitiveContains(searchQuery) }
+            results.append(contentsOf: matchingMovies.map { SearchResult(id: $0.id, type: .movie, name: $0.fields.name) })
+
+            // 🔍 Search in Actors
+            let matchingActors = actors.filter { $0.fields.name.localizedCaseInsensitiveContains(searchQuery) }
+            results.append(contentsOf: matchingActors.map { SearchResult(id: $0.id, type: .actor, name: $0.fields.name) })
+
+            // 🔍 Search in Directors
+            let matchingDirectors = directors.filter { $0.fields.name.localizedCaseInsensitiveContains(searchQuery) }
+            results.append(contentsOf: matchingDirectors.map { SearchResult(id: $0.id, type: .director, name: $0.fields.name) })
+
+            return results
+        }
     }
     
     

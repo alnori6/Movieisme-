@@ -33,6 +33,7 @@ struct SeeMore: View {
                                     .cornerRadius(8)
                             }
                             .buttonStyle(PlainButtonStyle())
+                            .frame(width: 172, height: 237)
                         }
                     }
                     .padding(.horizontal, 16)
