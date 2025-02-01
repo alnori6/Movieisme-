@@ -200,7 +200,7 @@ struct TentacledFields: Codable {
 
 
 enum SearchResultType {
-    case movie, actor, director
+    case movie, actor, director, genre
 }
 
 struct SearchResult: Identifiable {

@@ -12,6 +12,8 @@ struct MovieInfo: View {
     @EnvironmentObject private var movieVM : movieViewModel
     @Environment(\.presentationMode) var presentationMode
     
+    @State var showSheet: Bool = false
+    
     let movie: MoviesRecord
     //    @State var director: DirecrtorsRecord
     
@@ -280,7 +282,22 @@ struct MovieInfo: View {
                     Spacer().frame(height: 32)
                     
                     
-
+                    //MARK: - adding review ??
+                    
+                    Button(action: {
+                        showSheet.toggle()
+                    }){
+                        Text("Add Review")
+                            .font(.system(size: 14, weight: .semibold))
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .padding(.bottom, 16)
+                            .padding(.horizontal)
+                            .foregroundColor(.accent)
+                    }.sheet(isPresented: $showSheet) {
+                        AddReviews(movie: movie)
+                            .presentationDetents([.large])
+                            .environmentObject(movieVM)
+                    }
                     
                     let filteredReviews = movieVM.getReviewsForMovie(movieID: movie.id)
 

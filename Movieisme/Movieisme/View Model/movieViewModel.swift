@@ -46,6 +46,14 @@ class movieViewModel: ObservableObject {
         return ratingOutOfTen / 2.0
     }
 
+    // =======================================================
+   // MARK: -  Keyboard edits
+   // =======================================================
+  
+   // MARK: - Dismiss Keyboard
+   func hideKeyboard() {
+       UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+   }
     
     //MARK: - filter the movies
     
@@ -75,18 +83,22 @@ class movieViewModel: ObservableObject {
         return movies.filter { heigh.contains($0.fields.name) }
     }
     
-//    var dramaMovies: [MoviesRecord] {
-//        let drama = ["The Shawshank Redemption", "A Star Is Born"]
-//        
-//        return movies.filter { drama.contains($0.fields.name) }
-////        movies.filter { $0.fields.genre.contains("Drama") }
-//    }
-////    
-//    var comedyMovies: [MoviesRecord] {
-//        let comedy = ["World's Greatest Dad", "House Party"]
-//        
-//        return movies.filter { comedy.contains($0.fields.name) }
-//    }
+    func getMoviesByGenre(genre: String) -> [MoviesRecord] {
+        switch genre.lowercased() {
+        case "drama":
+            return dramaMovies
+        case "comedy":
+            return comedyMovies
+        case "action":
+            return ActionMovies
+        case "thriller":
+            return ThrillerMovies
+        case "crime":
+            return CrimeMovies
+        default:
+            return movies.filter { $0.fields.genre.contains(genre) }
+        }
+    }
     
     
     //=====================================================
@@ -125,6 +137,10 @@ class movieViewModel: ObservableObject {
             // 🔍 Search in Movies
             let matchingMovies = movies.filter { $0.fields.name.localizedCaseInsensitiveContains(searchQuery) }
             results.append(contentsOf: matchingMovies.map { SearchResult(id: $0.id, type: .movie, name: $0.fields.name) })
+            
+            // 🔍 Search in Genres
+            let matchingGenres = ["Action", "Drama", "Comedy", "Thriller", "Crime"].filter { $0.localizedCaseInsensitiveContains(searchQuery) }
+            results.append(contentsOf: matchingGenres.map { SearchResult(id: UUID().uuidString, type: .genre, name: $0) })
 
             // 🔍 Search in Actors
             let matchingActors = actors.filter { $0.fields.name.localizedCaseInsensitiveContains(searchQuery) }
@@ -682,6 +698,48 @@ class movieViewModel: ObservableObject {
                 completion(true)
             case .failure(let error):
                 print("❌ Failed to update user: \(error.localizedDescription)")
+                completion(false)
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    //=====================================================
+    // MARK: - saved movies for each user
+    //=====================================================
+    
+
+    func submitReview(reviewText: String, rating: Int, movie: MoviesRecord, completion: @escaping (Bool) -> Void) {
+        guard let loggedInUser = loggedInUser else {
+            print("🚨 No logged-in user found.")
+            completion(false)
+            return
+        }
+
+        let reviewData: [String: Any] = [
+            "fields": [
+                "review_text": reviewText,
+                "rate": Double(rating),          // ✅ Convert to Double
+                "movie_id": movie.id,            // ✅ Ensure it's an array
+                "user_id": loggedInUser.id       // ✅ Ensure it's an array
+            ]
+        ]
+        
+        
+
+        service.submitReview(reviewData) { result in
+            switch result {
+            case .success:
+                print("✅ Review submitted successfully!")
+                DispatchQueue.main.async {
+                    self.loadReviews() // ✅ Reload reviews after submission
+                }
+                completion(true)
+            case .failure(let error):
+                print("❌ Failed to submit review: \(error.localizedDescription)")
                 completion(false)
             }
         }

@@ -256,11 +256,7 @@ struct Home: View {
                     
                 } // end scroll view
                 .frame(maxWidth: .infinity, alignment: .leading)
-                
-//                placement: .navigationBarDrawer(displayMode: .always),
-                
-          
-                
+               
                 
             }// end of the big vstack
             .toolbar(){
@@ -298,17 +294,62 @@ struct Home: View {
                     }
                     
                 }
-                .searchable(text: $searchQuery ,placement: .navigationBarDrawer(displayMode: .always), prompt: "Search for movies, actors...") {
-                    // Suggestions for search
-                    Text("Action").searchCompletion("Action")
-                    Text("Drama").searchCompletion("Drama")
-                    Text("Comedy").searchCompletion("Comedy")
-                    
-                    ForEach(movieVM.filteredResults) { result in
-                            Text(result.name).searchCompletion(result.name)
+            // ✅ FIXED SEARCH FUNCTIONALITY
+                .searchable(text: $searchQuery, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search for movies, actors...") {
+//                    // Static suggestions
+//                    Text("Action").searchCompletion("Action")
+//                    Text("Drama").searchCompletion("Drama")
+//                    Text("Comedy").searchCompletion("Comedy")
+//                    
+                    // Dynamic search results
+                    if !movieVM.filteredResults.isEmpty {
+                        // Dynamic Search Results with Navigation
+                        ForEach(movieVM.filteredResults) { result in
+                            if ["Action", "Drama", "Comedy", "Crime", "Thriller"].contains(result.name) {
+                                NavigationLink( destination: SeeMore(title: "\(result.name) Movies", movies: movieVM.getMoviesByGenre(genre: result.name))) {
+                                    Text(result.name)
+                                        .searchCompletion(result.name)
+                                        .searchCompletion("Action")
+                                    }
+                            }else if result.type == .movie {
+                                NavigationLink(destination: MovieInfo(movie: movieVM.movies.first { $0.id == result.id } ?? movieVM.movies.first!)) {
+                                    Text(result.name)
+                                        .searchCompletion(result.name)
+                                }
+                            }
+                            
+                        }
+                    } else {
+                        Text("No results found").foregroundColor(.gray)
                     }
                 }
+                
+                .onChange(of: searchQuery) { newValue in
+                    movieVM.searchQuery = newValue  // ✅ Ensure view model is updated
+                    print("🔍 Searching for: \(newValue)")
+                    print("🎯 Results: \(movieVM.filteredResults.map { $0.name })")
+                }
+                
                 .searchPresentationToolbarBehavior(.avoidHidingContent)
+                
+//                .searchable(text: $searchQuery ,placement: .navigationBarDrawer(displayMode: .always), prompt: "Search for movies, actors...") {
+//                    // Suggestions for search
+//                    Text("Action").searchCompletion("Action")
+//                    Text("Drama").searchCompletion("Drama")
+//                    Text("Comedy").searchCompletion("Comedy")
+//                    
+//                    List {
+//                       ForEach(movieVM.filteredResults) { result in
+//                           Text(result.name)
+//                               .searchCompletion(result.name)
+//                       }
+//                    }
+//                }
+//                .onChange(of: searchQuery) { newValue in
+//                        print("🔍 Searching for: \(newValue)")
+//                        print("🎯 Results: \(movieVM.filteredResults.map { $0.name })")
+//                    }
+//                .searchPresentationToolbarBehavior(.avoidHidingContent)
             
         } // end navgation
         

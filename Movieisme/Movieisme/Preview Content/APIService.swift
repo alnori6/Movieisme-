@@ -280,7 +280,72 @@ class APIService {
     
     
     
-    
+    func submitReview(_ reviewData: [String: Any], completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let url = URL(string: "\(baseURLString)/reviews") else {
+            completion(.failure(URLSessionError.invalidURL))
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue(apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: ["records": [reviewData]], options: [])
+        } catch {
+            completion(.failure(error))
+            return
+        }
+        
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: ["records": [reviewData]], options: [.prettyPrinted])
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                print("📤 Sending JSON to Airtable: \(jsonString)")
+            }
+            request.httpBody = jsonData
+        } catch {
+            print("❌ JSON Encoding Error: \(error.localizedDescription)")
+            completion(.failure(error))
+            return
+        }
+
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                DispatchQueue.main.async {
+                    print("❌ Network error: \(error.localizedDescription)")
+                    completion(.failure(error))
+                }
+                return
+            }
+
+            if let httpResponse = response as? HTTPURLResponse, !(200...299).contains(httpResponse.statusCode) {
+                if let data = data, let responseBody = String(data: data, encoding: .utf8) {
+                    print("❌ Server Error \(httpResponse.statusCode): \(responseBody)") // ✅ Print API error
+                } else {
+                    print("❌ Server Error \(httpResponse.statusCode): No response body")
+                }
+
+                let statusError = NSError(
+                    domain: "",
+                    code: httpResponse.statusCode,
+                    userInfo: [NSLocalizedDescriptionKey: "HTTP \(httpResponse.statusCode)"]
+                )
+
+                DispatchQueue.main.async {
+                    completion(.failure(statusError))
+                }
+                return
+            }
+
+            DispatchQueue.main.async {
+                print("✅ Review submitted successfully!")
+                completion(.success(()))
+            }
+        }
+
+        task.resume()
+    }
     
     
     

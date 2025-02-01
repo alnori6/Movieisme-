@@ -41,6 +41,8 @@ struct ReviewsCard: View {
                                 } placeholder: {
                                     ProgressView()
                                         .frame(width: 38, height: 38)
+                                        .background(Color.white.opacity(0.21))
+                                        .clipShape(Circle())
                                 }
                                 
                                 VStack(alignment: .leading, spacing: 4) {
